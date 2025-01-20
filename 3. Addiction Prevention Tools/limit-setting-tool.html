@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Addiction Prevention Tool</title>
+</head>
+<body>
+    <h1>Set Your Gaming Limits</h1>
+    <form id="limitForm">
+        <label for="timeLimit">Daily Time Limit (in minutes):</label>
+        <input type="number" id="timeLimit" required>
+        
+        <label for="spendingLimit">Daily Spending Limit (in currency):</label>
+        <input type="number" id="spendingLimit" required>
+        
+        <button type="submit">Set Limits</button>
+    </form>
+    <div id="limitMessage"></div>
+    <script>
+        document.getElementById('limitForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const timeLimit = document.getElementById('timeLimit').value;
+            const spendingLimit = document.getElementById('spendingLimit').value;
+
+            // Simulate saving limits
+            console.log('Limits set:', { timeLimit, spendingLimit });
+            document.getElementById('limitMessage').innerText = ' Limits have been set successfully. You will receive reminders when you approach your limits.';
+
+            // Reset the form
+            this.reset();
+        });
+    </script>
+</body>
+</html>
