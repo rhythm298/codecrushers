@@ -1,0 +1,27 @@
+[
+    {
+        "id": 1,
+        "description": "Games of skill are not considered gambling under Indian law.",
+        "category": "skill"
+    },
+    {
+        "id": 2,
+        "description": "Online gaming platforms must implement age verification mechanisms.",
+        "category": "general"
+    },
+    {
+        "id": 3,
+        "description": "Operators must comply with local state laws regarding online gaming.",
+        "category": "general"
+    },
+    {
+        "id": 4,
+        "description": "Data protection regulations must be followed to safeguard user information.",
+        "category": "data protection"
+    },
+    {
+        "id": 5,
+        "description": "Responsible gaming measures must be implemented to prevent addiction.",
+        "category": "responsible gaming"
+    }
+]
