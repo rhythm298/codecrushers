@@ -3,33 +3,303 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Addiction Prevention Tool</title>
+    <title>GameGuard - Smart Play Control</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2a2e3d;
+            --secondary: #4a90e2;
+            --accent: #ff4757;
+            --text: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1d2b, #2a2e3d);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 500px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--secondary);
+            font-size: 2.5rem;
+        }
+
+        .limit-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        input {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text);
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 0 2px var(--secondary);
+        }
+
+        button {
+            background: linear-gradient(135deg, var(--secondary), #6c5ce7);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 1rem;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .progress-container {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .progress-circle {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto;
+        }
+
+        .limit-message {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            display: none;
+        }
+
+        .active-limits {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--accent);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            display: none;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1.5rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Set Your Gaming Limits</h1>
-    <form id="limitForm">
-        <label for="timeLimit">Daily Time Limit (in minutes):</label>
-        <input type="number" id="timeLimit" required>
+    <div class="container">
+        <h1><i class="fas fa-shield-alt"></i> GameGuard</h1>
         
-        <label for="spendingLimit">Daily Spending Limit (in currency):</label>
-        <input type="number" id="spendingLimit" required>
-        
-        <button type="submit">Set Limits</button>
-    </form>
-    <div id="limitMessage"></div>
+        <form id="limitForm" class="limit-form">
+            <div class="form-group">
+                <label for="timeLimit"><i class="fas fa-clock"></i> Daily Play Time (minutes)</label>
+                <input type="number" id="timeLimit" min="0" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="spendingLimit"><i class="fas fa-coins"></i> Daily Spending Limit (₹)</label>
+                <input type="number" id="spendingLimit" min="0" required>
+            </div>
+
+            <button type="submit">Set Limits <i class="fas fa-lock"></i></button>
+        </form>
+
+        <div class="limit-message" id="limitMessage">
+            <i class="fas fa-check-circle"></i> Limits set successfully!
+        </div>
+
+        <div class="active-limits">
+            <h3>Current Limits</h3>
+            <p>Time: <span id="currentTimeLimit">-</span> minutes</p>
+            <p>Spending: <span id="currentSpendingLimit">-</span> ₹</p>
+            <button onclick="resetLimits()" class="reset-btn">
+                <i class="fas fa-redo"></i> Reset Limits
+            </button>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-circle" id="progressCircle"></div>
+            <p>Time Remaining: <span id="timeRemaining">-</span></p>
+        </div>
+    </div>
+
+    <div class="notification" id="notification">
+        <i class="fas fa-exclamation-triangle"></i> Approaching your daily limit!
+    </div>
+
     <script>
-        document.getElementById('limitForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const timeLimit = document.getElementById('timeLimit').value;
-            const spendingLimit = document.getElementById('spendingLimit').value;
+        let timeLimit = 0;
+        let spendingLimit = 0;
+        let timeUsed = 0;
+        let moneySpent = 0;
+        let timer;
 
-            // Simulate saving limits
-            console.log('Limits set:', { timeLimit, spendingLimit });
-            document.getElementById('limitMessage').innerText = ' Limits have been set successfully. You will receive reminders when you approach your limits.';
+        // Initialize from localStorage
+        const savedLimits = JSON.parse(localStorage.getItem('gameLimits')) || {};
+        if (savedLimits.time) {
+            document.getElementById('timeLimit').value = savedLimits.time;
+            timeLimit = savedLimits.time;
+        }
+        if (savedLimits.spending) {
+            document.getElementById('spendingLimit').value = savedLimits.spending;
+            spendingLimit = savedLimits.spending;
+        }
 
-            // Reset the form
-            this.reset();
+        document.getElementById('limitForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            timeLimit = parseInt(document.getElementById('timeLimit').value);
+            spendingLimit = parseInt(document.getElementById('spendingLimit').value);
+
+            // Save to localStorage
+            localStorage.setItem('gameLimits', JSON.stringify({
+                time: timeLimit,
+                spending: spendingLimit
+            }));
+
+            showMessage();
+            updateDisplay();
+            startMonitoring();
         });
+
+        function showMessage() {
+            const message = document.getElementById('limitMessage');
+            message.style.display = 'block';
+            setTimeout(() => message.style.display = 'none', 3000);
+        }
+
+        function updateDisplay() {
+            document.getElementById('currentTimeLimit').textContent = timeLimit;
+            document.getElementById('currentSpendingLimit').textContent = spendingLimit;
+        }
+
+        function startMonitoring() {
+            if (timer) clearInterval(timer);
+            
+            timer = setInterval(() => {
+                timeUsed += 1;
+                const remaining = timeLimit - timeUsed;
+                document.getElementById('timeRemaining').textContent = remaining;
+                
+                if (remaining <= timeLimit * 0.1) {
+                    showNotification('Time limit almost reached!');
+                }
+                
+                updateProgressCircle();
+            }, 60000); // Update every minute
+        }
+
+        function updateProgressCircle() {
+            const progress = (timeUsed / timeLimit) * 100;
+            const circle = document.getElementById('progressCircle');
+            circle.innerHTML = `
+                <svg viewBox="0 0 36 36" class="circular-chart">
+                    <path class="circle-bg"
+                        d="M18 2.0845
+                            a 15.9155 15.9155 0 0 1 0 31.831
+                            a 15.9155 15.9155 0 0 1 0 -31.831"
+                    />
+                    <path class="circle"
+                        stroke-dasharray="${progress}, 100"
+                        d="M18 2.0845
+                            a 15.9155 15.9155 0 0 1 0 31.831
+                            a 15.9155 15.9155 0 0 1 0 -31.831"
+                    />
+                    <text x="18" y="20.35" class="percentage">${Math.round(progress)}%</text>
+                </svg>
+            `;
+        }
+
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.display = 'block';
+            setTimeout(() => notification.style.display = 'none', 3000);
+        }
+
+        function resetLimits() {
+            localStorage.removeItem('gameLimits');
+            timeLimit = 0;
+            spendingLimit = 0;
+            timeUsed = 0;
+            document.getElementById('limitForm').reset();
+            updateDisplay();
+            clearInterval(timer);
+            document.getElementById('progressCircle').innerHTML = '';
+            document.getElementById('timeRemaining').textContent = '-';
+        }
+
+        // Initial display update
+        updateDisplay();
     </script>
 </body>
 </html>
