@@ -3,16 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gameplay Transparency Dashboard</title>
-    <link rel="stylesheet" href="dashboard.css">
+    <title>Advanced Game Transparency System</title>
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --danger: #e74c3c;
+            --success: #2ecc71;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            background: #f8f9fa;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .analytics-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .game-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .verification-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .risk-meter {
+            height: 8px;
+            border-radius: 4px;
+            background: #eee;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+
+        .risk-progress {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .blockchain-proof {
+            font-family: 'IBM Plex Mono', monospace;
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            word-break: break-all;
+            font-size: 0.9rem;
+        }
+
+        #verificationChart {
+            height: 300px;
+            margin: 2rem 0;
+        }
+</style>
 </head>
 <body>
-    <h1>Gameplay Transparency Dashboard</h1>
-    <div id="gameInfo">
-        <h2>Game Mechanics</h2>
-        <p>Learn about the odds and risks associated with your favorite games.</p>
-        <ul id="gameList"></ul>
+    <div class="dashboard-container">
+        <div class="analytics-header">
+            <h1>Game Integrity Dashboard <span class="mdi mdi-shield-check"></span></h1>
+            <div id="liveStatus"></div>
+        </div>
+
+        <div class="game-card">
+            <div class="verification-badge" id="globalVerification">
+                <span class="mdi mdi-loading mdi-spin"></span> Verifying...
+            </div>
+            
+            <h2>Game Performance Analytics</h2>
+            <canvas id="verificationChart"></canvas>
+            
+            <div class="risk-meter">
+                <div class="risk-progress" id="riskMeter"></div>
+            </div>
+
+            <div class="blockchain-section">
+                <h3>Blockchain Verification</h3>
+                <div class="blockchain-proof" id="blockchainProof"></div>
+                <button onclick="requestFullVerification()" class="mdi mdi-shield-refresh">
+                    Refresh Verification
+                </button>
+            </div>
+        </div>
+
+        <div id="dynamicContent"></div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="dashboard.js"></script>
 </body>
 </html>
